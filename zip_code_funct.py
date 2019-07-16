@@ -19,6 +19,7 @@ class ZipCode_TSA():
         zipcode_df = zipcode_df[self.start_date:]
         return zipcode_df
 
+    # The pdq function is for parameters searching, we dicided that we are using p, d, f = 2 
     # def pdq(self):
     #     p = d = q = range(2, 3)
     #     pdq = list(itertools.product(p, d, q))
@@ -42,6 +43,7 @@ class ZipCode_TSA():
     #     return (pdq_pdqs['pdq'], pdq_pdqs['pdqs'])
 
     def arima_model(self):
+        """ perform the ARIMA time series analysis model"""
         # params = self.pdq()
         ARIMA_MODEL = sm.tsa.statespace.SARIMAX(self.df_zipcode()['value'],
                                 order=[2, 2, 2],
@@ -57,6 +59,7 @@ class ZipCode_TSA():
     #     return pred_self_conf
 
     def prediction_conf(self, steps=6):
+        """ return the prediction parameters """
         # Get forecast 6 steps ahead in future
         prediction = self.arima_model().get_forecast(steps)
         # Get confidence intervals of forecasts
@@ -64,8 +67,7 @@ class ZipCode_TSA():
         return (prediction, pred_conf)
 
     def forecast(self):
-        # mean_forecast = self.prediction.predicted_mean
-        # What the forecast mean is at the end of 6 months
+        """ return the prediction results of the time series model"""
         pred = self.prediction_conf()
         zipcode_df = self.df_zipcode()
         target = pred[0].predicted_mean[-1] - pred[0].predicted_mean[0]
